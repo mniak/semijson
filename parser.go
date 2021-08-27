@@ -109,13 +109,28 @@ func (v JArray) JSON() string {
 }
 
 type JDate struct {
-	Year  uint16 `"new" "Date" "(" @(Digit+) ","`
-	Month uint8  `@(Digit+) ","`
-	Day   uint8  `@(Digit+) ")"`
+	Year       uint16   `"new" "Date" "(" @(Digit+) `
+	Month      uint8    `"," @(Digit+)`
+	Day        uint8    `"," @(Digit+) `
+	MoreValues []uint64 `( "," @(Digit+) )* ")"`
 }
 
 func (v JDate) JSON() string {
-	return fmt.Sprintf("\"%04d-%02d-%02dT00:00:00Z\"", v.Year, v.Month, v.Day)
+	var hour, minute, second uint64
+	if len(v.MoreValues) > 3 {
+		hour = v.MoreValues[3]
+	}
+	if len(v.MoreValues) > 4 {
+		minute = v.MoreValues[4]
+	}
+	if len(v.MoreValues) > 5 {
+		second = v.MoreValues[5]
+	}
+
+	return fmt.Sprintf(
+		"\"%04d-%02d-%02dT%02d:%02d:%02dZ\"",
+		v.Year, v.Month, v.Day,
+		hour, minute, second)
 }
 
 func newParser() *participle.Parser {
