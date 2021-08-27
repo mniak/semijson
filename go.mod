@@ -1,4 +1,4 @@
-module github.com/semijson
+module github.com/mniak/semijson
 
 go 1.16
 
